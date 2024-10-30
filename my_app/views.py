@@ -5,13 +5,15 @@ import re
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from datetime import datetime
+import os
 
  # Hàm xử lý Dashboard và đọc file log
 def dashboard_view(request):
     log_entries = []
 
     # Đọc file log và xử lý từng dòng
-    with open('/home/kali/my_project/my_app/file/web_server.log', 'r') as file:
+    log_file_path = os.path.join(os.path.dirname(__file__), 'file', 'web_server.log')
+    with open(log_file_path, 'r') as file:
         for line in file:
             # Bỏ qua dòng tiêu đề hoặc các dòng không phải log
             if line.startswith("#") or not line.strip():
@@ -65,7 +67,8 @@ def model_view(request):
         processed_input = preprocess_url(url_input)
         
         # Tải model và thực hiện dự đoán
-        model = load_model('/home/kali/my_project/my_app/file/model.h5')
+        model_file_path = os.path.join(os.path.dirname(__file__), 'file', 'model.h5')
+        model = load_model(model_file_path)
         input_array = np.array([processed_input])  # Chuyển thành numpy array
 
         result = model.predict(input_array)[0][0]  # Dự đoán và lấy kết quả
