@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/dashboard_style.css' %}">
+</head>
+<body>
+<div class="container">
+    <div class="sidebar">
+        <h3>Menu</h3>
+        <ul>
+            <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li><a href="{% url 'model' %}">Model</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <h2>Nội dung file log</h2>
+
+        <!-- Thanh tìm kiếm -->
+        <form method="get" action="{% url 'dashboard' %}">
+            <input type="text" name="q" value="{{ query }}" placeholder="Tìm kiếm log...">
+            <button type="submit">Tìm kiếm</button>
+        </form>
+
+        <!-- Bảng hiển thị log -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Ngày</th>
+                    <th>Source IP</th>
+                    <th>Dest IP</th>
+                    <th>Source Port</th>
+                    <th>Dest Port</th>
+                    <th>Thông tin khác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in page_obj %}
+                <tr>
+                    <td>{{ entry.date }}</td>
+                    <td>{{ entry.source_ip }}</td>
+                    <td>{{ entry.dest_ip }}</td>
+                    <td>{{ entry.source_port }}</td>
+                    <td>{{ entry.dest_port }}</td>
+                    <td>{{ entry.info }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">Không có bản ghi nào.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Phân trang -->
+        <div class="pagination">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1{% if query %}&q={{ query }}{% endif %}">&laquo; Đầu tiên</a>
+                    <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Trước</a>
+                {% endif %}
+
+                <span class="current">
+                    Trang {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Tiếp theo</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}">Cuối cùng &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+</div>
+</body>
+</html>

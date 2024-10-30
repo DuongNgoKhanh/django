@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/model_style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h3>Menu</h3>
+            <ul style="list-style-type: none; padding: 0;">
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'model' %}">Model</a></li>
+            </ul>
+        </div>
+        <div class="content">
+            <h2>Nhập dữ liệu vào mô hình</h2>
+            <form id="model-form" method="post" action="{% url 'model' %}">
+                {% csrf_token %}
+                <label for="input_data">Dữ liệu:</label>
+                <input type="text" id="input_data" name="input_data" required>
+                <button type="submit">Submit</button>
+            </form>
+            <div id="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+            {% if result %}
+                <h3>Kết quả từ mô hình: {{ result }}</h3>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('model-form');
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Ngăn chặn hành động mặc định của form
+            progressContainer.style.display = 'block'; // Hiện thanh tiến trình
+            progressBar.style.width = '0%'; // Reset thanh tiến trình
+
+            const formData = new FormData(form);
+
+            // Giả lập tiến trình (thay thế bằng AJAX thực tế nếu cần)
+            const interval = setInterval(() => {
+                const currentWidth = parseInt(progressBar.style.width);
+                if (currentWidth >= 100) {
+                    clearInterval(interval);
+                    form.submit(); // Gửi form khi tiến trình hoàn tất
+                } else {
+                    progressBar.style.width = (currentWidth + 10) + '%'; // Tăng dần thanh tiến trình
+                }
+            }, 200); // Thay đổi giá trị này để điều chỉnh tốc độ
+        });
+    </script>
+</body>
+</html>
